@@ -2,30 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Categories;
+namespace App\Models\Goals;
 
-use App\Models\Transactions\Transaction;
 use App\Models\Users\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Category extends Model
+class Goal extends Model
 {
     protected $fillable = [
         'user_id',
         'name',
-        'type',
+        'goal_value',
+        'deadline',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
-    public function transactions(): HasMany
-    {
-        return $this->hasMany(Transaction::class);
-    }
-
 }
