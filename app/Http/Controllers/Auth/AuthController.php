@@ -8,11 +8,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\StoreAuthRequest;
 use App\Models\Users\User;
 use Exception;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +35,9 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        event(new Registered($user));
+
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
@@ -64,6 +70,54 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Login realizado com sucesso!',
             'token' => $user->createToken('auth-token')->plainTextToken,
+        ]);
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    public function verify(Request $request, $id, $hash): JsonResponse
+    {
+        $user = User::findOrFail($id);
+
+        if (!URL::hasValidSignature($request)) {
+            throw ValidationException::withMessages([
+                'message' => ['Link de verificação inválido ou expirado.'],
+            ]);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'E-mail já foi verificado.',
+            ]);
+        }
+
+        $user->markEmailAsVerified();
+        event(new Verified($user));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'E-mail verificado com sucesso!',
+        ]);
+    }
+
+    public function resendVerificationEmail(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'E-mail já está verificado.',
+            ], 422);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Link de verificação reenviado!',
         ]);
     }
 
@@ -106,5 +160,5 @@ class AuthController extends Controller
             'message' => 'Logout realizado com sucesso!'
         ]);
     }
-    
+
 }
