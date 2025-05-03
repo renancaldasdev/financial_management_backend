@@ -8,6 +8,7 @@ use App\Models\Accounts\Account;
 use App\Models\Categories\Category;
 use App\Models\Goals\Goal;
 use App\Models\Transactions\Transaction;
+use App\Notifications\Auth\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -57,6 +58,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $frontendUrl = config('app.frontend_url') . '/reset-password?token=' . $token . '&email=' . $this->email;
+        $this->notify(new ResetPasswordNotification($frontendUrl));
+    }
+
 
     public function accounts(): HasMany
     {
