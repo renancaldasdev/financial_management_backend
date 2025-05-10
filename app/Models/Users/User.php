@@ -9,7 +9,7 @@ use App\Models\Categories\Category;
 use App\Models\Goals\Goal;
 use App\Models\Transactions\Transaction;
 use App\Notifications\Auth\ResetPasswordNotification;
-use Database\Factories\UserFactory;
+use Database\Factories\Users\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
