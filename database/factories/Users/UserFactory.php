@@ -1,10 +1,9 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Users;
 
 use App\Models\Users\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
@@ -35,7 +34,6 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => bcrypt('password'), // ou Hash::make(...)
-            'remember_token' => Str::random(10),
         ];
     }
 
