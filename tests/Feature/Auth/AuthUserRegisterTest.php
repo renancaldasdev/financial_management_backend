@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Feature\Auth;
+namespace Tests\Feature\Auth;
 
 use App\Models\Users\User;
 use Illuminate\Auth\Events\Registered;

@@ -76,7 +76,7 @@ class AuthController extends Controller
     /**
      * @throws ValidationException
      */
-    public function verify(Request $request, $id, $hash): JsonResponse
+    public function verify(Request $request, int $id): JsonResponse
     {
         $user = User::findOrFail($id);
 
