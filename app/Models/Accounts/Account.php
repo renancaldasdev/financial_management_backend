@@ -20,6 +20,7 @@ class Account extends Model
         'balance',
     ];
 
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
